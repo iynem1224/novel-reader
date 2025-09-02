@@ -79,32 +79,45 @@ func (m TOCModel) Init() tea.Cmd { return nil }
 
 func (m TOCModel) Update(msg tea.Msg) (TOCModel, tea.Cmd) {
 	if keyMsg, ok := msg.(tea.KeyMsg); ok {
-		switch keyMsg.String() {
-		case "enter":
-			if item, ok := m.list.SelectedItem().(TOCItem); ok {
-				return m, func() tea.Msg { return TOCSelectMsg(item.index) }
-			}
-		case "esc", "q":
-			return m, func() tea.Msg { return TOCCancelMsg{} }
+	    switch keyMsg.String() {
+	    case "enter":
+	        if item, ok := m.list.SelectedItem().(TOCItem); ok {
+	            return m, func() tea.Msg { return TOCSelectMsg(item.index) }
+	        }
+	    case "esc":
+	        if m.list.FilterState() == list.Filtering {
+    		    // exit filter input but keep TOC open
+    		    m.list.ResetFilter()
+    		    return m, nil
+    		}
+    		if m.list.IsFiltered() {
+    		    // clear applied filter results
+    		    m.list.ResetFilter()
+    		    return m, nil
+    		}
+    		// otherwise: exit TOC
+    		return m, func() tea.Msg { return TOCCancelMsg{} }
+	    }
 
-		// Capture digits before list sees them
-		case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
-			m.jumpBuffer += keyMsg.String()
-			return m, nil
-
-		// Our custom “number+G” motion
-		case "g", "G":
-			if m.jumpBuffer != "" {
-				var idx int
-				fmt.Sscanf(m.jumpBuffer, "%d", &idx)
-				idx-- // convert 1-based → 0-based
-				if idx >= 0 && idx < len(m.list.Items()) {
-					m.list.Select(idx)
-				}
-				m.jumpBuffer = ""
-				return m, nil
-			}
-		}
+	    // Only intercept digits if we're NOT filtering
+	    if m.list.FilterState() != list.Filtering {
+	        switch keyMsg.String() {
+	        case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
+	            m.jumpBuffer += keyMsg.String()
+	            return m, nil
+	        case "g", "G":
+	            if m.jumpBuffer != "" {
+	                var idx int
+	                fmt.Sscanf(m.jumpBuffer, "%d", &idx)
+	                idx--
+	                if idx >= 0 && idx < len(m.list.Items()) {
+	                    m.list.Select(idx)
+	                }
+	                m.jumpBuffer = ""
+	                return m, nil
+	            }
+	        }
+	    }
 	}
 
 	// If not handled, let list process the key normally

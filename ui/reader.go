@@ -12,7 +12,7 @@ import (
 	"novel_reader/utils"
 )
 
-var chapterPattern = regexp.MustCompile(`^第[0-9一二三四五六七八九十百千~-]+章(?:\s.*)?$`)
+var chapterPattern = regexp.MustCompile(`^第[0-9一二三四五六七八九十百千~-]+章(?:(?: |$|：).*)?$`)
 
 type Chapter struct {
 	Title string
@@ -81,14 +81,14 @@ func (m ReaderModel) Update(msg tea.Msg) (ReaderModel, tea.Cmd) {
 	progressMap, _ := utils.Load()
 	lastChapter := ""
 	if len(m.TOC) > 0 {
-    	lastChapter = m.TOC[len(m.TOC)-1].Title
+		lastChapter = m.TOC[len(m.TOC)-1].Title
 	}
 
 	progressMap[m.Name] = utils.Progress{
-    	Chapter:     m.currentChapter,
-    	Page:        m.Page,
-    	LastRead:    time.Now(),
-    	LastChapter: lastChapter,
+		Chapter:     m.currentChapter,
+		Page:        m.Page,
+		LastRead:    time.Now(),
+		LastChapter: lastChapter,
 	}
 	utils.Save(progressMap)
 
