@@ -1,0 +1,14 @@
+novels/
+novels_2/
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon files
+Icon?
