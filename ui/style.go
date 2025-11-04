@@ -13,6 +13,11 @@ func ReaderStyle(width int) gloss.Style {
 		PaddingTop(1)
 }
 
+var ReaderLoadingStyle = gloss.NewStyle().
+	Foreground(gloss.Color("#89b4fa")).
+	Padding(2).
+	Align(gloss.Center)
+
 const (
 	TabSpacing    = 4
 	TabPaddingTop = 1
@@ -85,7 +90,20 @@ var (
 	UnderlineRow = gloss.NewStyle().
 			Foreground(gloss.Color("#363a4f")).
 			Align(gloss.Center)
-	
+
 	List = gloss.NewStyle().
 		Align(gloss.Center)
+
+	StatusStyle = gloss.NewStyle().
+			Foreground(gloss.Color("#89b4fa")).
+			PaddingLeft(4).
+			PaddingRight(4).
+			PaddingTop(1).
+			Align(gloss.Center)
+
+	StatusMutedStyle = gloss.NewStyle().
+				Foreground(gloss.Color("#585b70")).
+				PaddingLeft(4).
+				PaddingTop(1).
+				Align(gloss.Center)
 )
